@@ -1,0 +1,16 @@
+names:
+- Apples
+- Bananas
+- Grapes
+- Oranges
+- Strawberries
+nc: 5
+roboflow:
+  license: CC BY 4.0
+  project: common-fruits-detection
+  url: https://universe.roboflow.com/food-detection-dataset/common-fruits-detection/dataset/10
+  version: 10
+  workspace: food-detection-dataset
+test: test/images
+train: train/images
+val: valid/images

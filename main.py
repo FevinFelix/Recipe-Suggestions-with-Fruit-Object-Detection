@@ -8,6 +8,8 @@ import math
 import ultralytics
 from ultralytics import YOLO
 
+import os
+
 model = YOLO("best7.pt")
 
 def print_detected(imgPath) -> list:
@@ -64,8 +66,14 @@ class App(customtkinter.CTk):
 
         your_Image=filedialog.askopenfilename(title = "Select your image",filetypes = [("Image Files","*.png"),("Image Files","*.jpg")])
         img_File=Image.open(your_Image)
+        
+        # runs object detection on image and retrieves converted image
+        results = model.predict(source=img_File.filename, save=True) 
+        head, tail = os.path.split(img_File.filename)
+        print(tail)
+        converted_img = Image.open(f"./runs/detect/predict/{tail}")
 
-        # resizes image
+        # finds maximum image dimensions
         original_h = img_File.height
         original_w = img_File.width
         target_area = (text.winfo_height())* (text.winfo_width())
@@ -79,7 +87,7 @@ class App(customtkinter.CTk):
             new_h /= 1.1
             new_w /= 1.1 
 
-        your_image = customtkinter.CTkImage(light_image=img_File, size=(new_w, new_h))
+        your_image = customtkinter.CTkImage(light_image=converted_img, size=(new_w, new_h))
         label = customtkinter.CTkLabel(master=text, image=your_image, text='')
         label.grid(column=0, row=0, columnspan=4)
 app = App()

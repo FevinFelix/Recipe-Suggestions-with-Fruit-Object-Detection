@@ -70,13 +70,20 @@ class App(customtkinter.CTk):
         self.previous_button.grid(row=1, column=3, padx=10, pady=10, sticky="we")
 
         self.detected_fruits = []
+        self.has_textbox = True
 
     def button_callback(self):
         self.textbox.insert("insert", self.combobox.get() + "\n")
     
     def upload_and_display(self):
-        self.textbox.destroy()
+        if (self.has_textbox):
+            self.textbox.destroy()
+        else:
+            self.textbox1.destroy()
+            self.textbox2.destroy()
+
         self.textbox = customtkinter.CTkTextbox(master=self)
+        self.has_textbox = True
         self.textbox.grid(row=0, column=0, columnspan=4, padx=20, pady=(20, 0), sticky="nesw")
         text = self.textbox
 
@@ -117,14 +124,14 @@ class App(customtkinter.CTk):
 
     def display_recipe(self):
         self.textbox.destroy()
+        self.has_textbox = False
         self.textbox1 = customtkinter.CTkTextbox(master=self)
         self.textbox1.grid(row=0, column=0, columnspan=2, padx=10, pady=(10, 0), sticky="nesw")
         self.textbox2 = customtkinter.CTkTextbox(master=self)
         self.textbox2.grid(row=0, column=2, columnspan=2, padx=10, pady=(10, 0), sticky="nesw")
-        self.textbox2.insert(0.0, "example text")
 
         recipes = get_recipes(self.detected_fruits)
-        response = requests.get(recipes[0].picture)
+        response = requests.get(recipes[9].picture)
         img = Image.open(BytesIO(response.content))
 
         original_h = img.height
@@ -133,16 +140,24 @@ class App(customtkinter.CTk):
         new_w = math.sqrt((original_w / original_h) * target_area)
         new_h = target_area / new_w
 
-        if (new_h > new_w):
-            new_h /= 1.5
-            new_w /= 1.5
-        else:
-            new_h /= 1.1
-            new_w /= 1.1 
+        # if (new_h > new_w):
+        #     new_h /= 1.5
+        #     new_w /= 1.5
+        # else:
+        #     new_h /= 1.1
+        #     new_w /= 1.1 
 
         your_image = customtkinter.CTkImage(light_image=img, size=(new_w, new_h))
         label = customtkinter.CTkLabel(master=self.textbox1, image=your_image, text='')
         label.grid(column=0, row=0, columnspan=2)
+
+        name = recipes[9].name
+        link = recipes[9].link
+        missed_ingredients = recipes[9].missed_ingredients
+        self.textbox2.insert(0.0, str(missed_ingredients) + '\n')
+        self.textbox2.insert(0.0, link + '\n')
+        self.textbox2.insert(0.0, name + '\n')
+   
 
 
 app = App()

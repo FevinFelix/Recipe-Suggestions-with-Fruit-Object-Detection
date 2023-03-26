@@ -36,11 +36,4 @@ def get_recipes(ingredients): #takes list of strings for ingredients (assumes at
 
         recipes.append(Recipe(recipe["image"], recipe_link, recipe["title"], missed))
     
-        
     return recipes
-
-stuff = get_recipes(["strawberries, bananas"])
-for item in stuff:
-    print (item.name + '\n', item.link + '\n', item.picture + '\n', item.missed_ingredients)
-    print()
-    print("---------------------------------------------------------")

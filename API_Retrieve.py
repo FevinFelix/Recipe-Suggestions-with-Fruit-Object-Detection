@@ -20,7 +20,7 @@ def get_recipes(ingredients): #takes list of strings for ingredients (assumes at
             ingredient_string += f",+{ingredient}"
 
     api_key = '352414cea46e40089e7970226495d8dd'
-    api_call = f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}&ingredients={ingredient_string}&ranking=2"
+    api_call = f"https://api.spoonacular.com/recipes/findByIngredients?apiKey={api_key}&ingredients={ingredient_string}&ranking=1"
 
     api_response = requests.get(api_call).json()
 

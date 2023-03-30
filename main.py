@@ -63,15 +63,18 @@ class App(customtkinter.CTk):
 
         self.upload_button = customtkinter.CTkButton(master=self, command=self.upload_and_display, text="Upload Image")
         self.upload_button.grid(row=1, column=0, padx=10, pady=10, sticky="we")
-        self.recipe_button = customtkinter.CTkButton(master=self, command=self.display_recipe, text="Show Recipes")
+        self.recipe_button = customtkinter.CTkButton(master=self, command=self.load_recipes, text="Show Recipes")
         self.recipe_button.grid(row=1, column=1, padx=10, pady=10, sticky="we")
-        self.next_button = customtkinter.CTkButton(master=self, text="Next Recipe")
+        self.next_button = customtkinter.CTkButton(master=self, command=self.next_recipe, text="Next Recipe")
         self.next_button.grid(row=1, column=2, padx=10, pady=10, sticky="we")
-        self.previous_button = customtkinter.CTkButton(master=self, text="Previous Recipe")
+        self.previous_button = customtkinter.CTkButton(master=self, command=self.previous_recipe, text="Previous Recipe")
         self.previous_button.grid(row=1, column=3, padx=10, pady=10, sticky="we")
 
         self.detected_fruits = []
         self.has_textbox = True
+        self.has_recipe_frame = False
+        self.recipes = None
+        self.current_recipe = None
 
     def button_callback(self):
         self.textbox.insert("insert", self.combobox.get() + "\n")
@@ -79,6 +82,9 @@ class App(customtkinter.CTk):
     def upload_and_display(self):
         if (self.has_textbox):
             self.textbox.destroy()
+        if (self.has_recipe_frame):
+            self.recipe_frame.destroy()
+            self.has_recipe_frame = False
 
         self.textbox = customtkinter.CTkTextbox(master=self)
         self.has_textbox = True
@@ -115,18 +121,48 @@ class App(customtkinter.CTk):
         label = customtkinter.CTkLabel(master=text, image=your_image, text='')
         label.grid(column=0, row=0, columnspan=4)
 
+    # displays the recipe details of the recipe at the current global index of the gathered recipes list
     def display_recipe(self):
-        self.textbox.destroy()
-        self.has_textbox = False
+        if (self.has_textbox):
+            self.textbox.destroy()
+            self.has_textbox = False
+        
+        if (self.has_recipe_frame):
+            self.recipe_frame.destroy()
+            self.has_recipe_frame = True
 
-        recipes = get_recipes(self.detected_fruits)
-        picture = recipes[6].picture
-        recipe_name = recipes[6].name
-        recipe_link = recipes[6].link
-        missed = recipes[6].missed_ingredients
+        picture = self.recipes[self.current_recipe].picture
+        recipe_name = self.recipes[self.current_recipe].name
+        recipe_link = self.recipes[self.current_recipe].link
+        missed = self.recipes[self.current_recipe].missed_ingredients
 
         self.recipe_frame = RecipeFrame(self, image = picture, name = recipe_name, link = recipe_link, missed_ingredients = missed)
         self.recipe_frame.grid(row=0, column=0, columnspan=4, padx=10, pady=(10, 0), sticky="nesw")
+
+    # once the user clicks on the "load recipes" button, the recipes are first gathered into an array
+    # the first recipe's details are automatically loaded onto the screen afterwards and the index of the recipe shown is set to 0
+    def load_recipes(self):
+        self.recipes = get_recipes(self.detected_fruits) # gathered recipes are stored as a list in "recipes" variable
+        self.current_recipe = 0
+        self.display_recipe()
+    
+    # displays the next recipe in recipe list
+    def next_recipe(self):
+        if self.current_recipe < 9:
+            self.current_recipe += 1
+        else:
+            self.current_recipe = 0
+        
+        self.display_recipe()
+    
+    # displays the previous recipe in recipe list
+    def previous_recipe(self):
+        if self.current_recipe > 1:
+            self.current_recipe -= 1
+        else:
+            self.current_recipe = 9
+        
+        self.display_recipe()
 
 
 

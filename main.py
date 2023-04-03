@@ -51,8 +51,8 @@ class App(customtkinter.CTk):
         super().__init__()
 
         self.geometry("800x500")
-        self.title("small example app")
-        self.minsize(300, 200)
+        self.title("Recipe Suggestion App")
+        self.minsize(1200, 800)
 
         # create grid system
         self.grid_rowconfigure(0, weight=1)
@@ -106,7 +106,7 @@ class App(customtkinter.CTk):
         # finds maximum image dimensions
         original_h = img_File.height
         original_w = img_File.width
-        target_area = (text.winfo_height())* (text.winfo_width())
+        target_area = (text.winfo_height()) * (text.winfo_width())
         new_w = math.sqrt((original_w / original_h) * target_area)
         new_h = target_area / new_w
 
